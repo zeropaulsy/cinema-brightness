@@ -1,13 +1,12 @@
-# Cinema Display Brightness
+# Apple Cinema Display Brightness
 
 A GNOME Shell extension that adds a brightness slider to Quick Settings for
-Apple Cinema and Studio Displays connected over USB. These displays take
+[Apple Cinema](https://en.wikipedia.org/wiki/Apple_Cinema_Display) and [LCD Studio Displays](https://en.wikipedia.org/wiki/Apple_Studio_Display_(1998%E2%80%932004)) connected over USB. These displays take
 brightness over USB HID, not DDC/CI, so GNOME's own slider doesn't show up
 for them.
 
-- Controls every connected display at once, with smooth fades.
-- No compiled code. A small bundled Python 3 helper talks to the displays
-  directly (about 5 ms per step).
+- Controls every connected display at once with smooth fades.
+- A small bundled Python 3 helper talks to the displays directly (about 5 ms per step).
 - One-click setup from the slider's menu for the parts that need root.
 
 Requires GNOME Shell 50 and `python3`.

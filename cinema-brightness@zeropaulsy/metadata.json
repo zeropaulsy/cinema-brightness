@@ -1,0 +1,8 @@
+{
+  "uuid": "cinema-brightness@zeropaulsy",
+  "name": "Cinema Display Brightness",
+  "description": "Brightness slider in Quick Settings for Apple Cinema and Studio Displays connected over USB. Smooth fades, controls every connected display, and a one-click setup for USB access.",
+  "shell-version": ["50"],
+  "version-name": "1.0",
+  "url": ""
+}

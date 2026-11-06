@@ -120,6 +120,13 @@ class CinemaSlider extends QuickSlider {
         this.menu.addMenuItem(this._statusSection);
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
         this._setupItem = this.menu.addAction('Set Up Display Access…', () => this._runSetup());
+        this._statusItems = []; // [{item, display}] for live label updates
+
+        // Re-read when the dropdown itself opens, not only Quick Settings.
+        this.menu.connect('open-state-changed', (menu, open) => {
+            if (open)
+                this.refresh();
+        });
 
         this.refresh();
     }
@@ -144,17 +151,29 @@ class CinemaSlider extends QuickSlider {
         this.slider.reactive = working.length > 0;
 
         this._statusSection.removeAll();
+        this._statusItems = [];
         for (const d of displays) {
-            const status = d.problem ? PROBLEM_TEXT[d.problem] ?? d.problem : `${d.brightness} / ${MAX}`;
-            const item = new PopupMenu.PopupMenuItem(`${d.name}: ${status}`, {reactive: false});
+            const item = new PopupMenu.PopupMenuItem('', {reactive: false});
             this._statusSection.addMenuItem(item);
+            this._statusItems.push({item, display: d});
         }
+        this._updateLabels();
 
         if (working.length && !this._animating) {
             this._current = working[0].brightness;
             this.slider.block_signal_handler(this._sliderId);
             this.slider.value = this._current / MAX;
             this.slider.unblock_signal_handler(this._sliderId);
+        }
+    }
+
+    // Show each display's brightness; pass a value to show what was just sent.
+    _updateLabels(value = null) {
+        for (const {item, display: d} of this._statusItems) {
+            if (value !== null && d.problem === null)
+                d.brightness = value;
+            const status = d.problem ? PROBLEM_TEXT[d.problem] ?? d.problem : `${d.brightness} / ${MAX}`;
+            item.label.text = `${d.name}: ${status}`;
         }
     }
 
@@ -209,6 +228,8 @@ class CinemaSlider extends QuickSlider {
     async _send(value) {
         try {
             await this._helper.request(`set ${value}`);
+            if (!this._destroyed)
+                this._updateLabels(value);
         } catch (e) {
             console.error(`cinema-brightness: set failed: ${e.message}`);
         }
